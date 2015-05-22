@@ -32,7 +32,7 @@ import javax.xml.parsers.SAXParserFactory;
 import rx.Observable;
 import rx.functions.Func0;
 
-public class RssReader {
+public class FeedReader {
 
     public static RssFeed read(URL url) throws SAXException, IOException {
 
@@ -47,7 +47,7 @@ public class RssReader {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
             XMLReader reader = parser.getXMLReader();
-            RssHandler handler = new RssHandler();
+            FeedHandler handler = new FeedHandler();
             InputSource input = new InputSource(stream);
 
             reader.setContentHandler(handler);
@@ -74,7 +74,7 @@ public class RssReader {
                     SAXParserFactory factory = SAXParserFactory.newInstance();
                     SAXParser parser = factory.newSAXParser();
                     XMLReader reader = parser.getXMLReader();
-                    RssHandler handler = new RssHandler();
+                    FeedHandler handler = new FeedHandler();
                     InputSource input = new InputSource(stream);
 
                     reader.setContentHandler(handler);
