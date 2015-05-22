@@ -16,6 +16,10 @@
 
 package nl.matshofman.saxrssreader;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,9 +29,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import rx.Observable;
+import rx.functions.Func0;
 
 public class RssReader {
 
@@ -60,6 +63,29 @@ public class RssReader {
 
     public static RssFeed read(String source) throws SAXException, IOException {
         return read(new ByteArrayInputStream(source.getBytes()));
+    }
+
+    public static Observable<RssFeed> readWithObservable(final URL url) {
+        return Observable.defer(new Func0<Observable<RssFeed>>() {
+            @Override
+            public Observable<RssFeed> call() {
+                try {
+                    InputStream stream = url.openStream();
+                    SAXParserFactory factory = SAXParserFactory.newInstance();
+                    SAXParser parser = factory.newSAXParser();
+                    XMLReader reader = parser.getXMLReader();
+                    RssHandler handler = new RssHandler();
+                    InputSource input = new InputSource(stream);
+
+                    reader.setContentHandler(handler);
+                    reader.parse(input);
+
+                    return Observable.just(handler.getResult());
+                } catch (Exception e) {
+                    return Observable.just(new RssFeed());
+                }
+            }
+        });
     }
 
 }

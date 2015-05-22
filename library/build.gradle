@@ -13,4 +13,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    dependencies {
+        compile 'io.reactivex:rxjava:1.0.9'
+    }
 }
