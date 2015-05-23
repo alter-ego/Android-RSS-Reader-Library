@@ -32,7 +32,7 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
 
     @Getter
     @Setter
-    protected Feed.FEED_TYPE feedtype;
+    protected Feed.FEED_TYPE feedtype = Feed.FEED_TYPE.UNKNOWN;
 
     @Getter
     @Setter
