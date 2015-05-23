@@ -60,6 +60,11 @@ public class Feed implements Parcelable {
     protected Date updated;
 
     @Getter
+    protected Date lastBuildDate;
+
+    protected Date pubDate;
+
+    @Getter
     @Setter
     protected ArrayList<FeedItem> items;
 
@@ -80,6 +85,8 @@ public class Feed implements Parcelable {
         description = data.getString("description");
         language = data.getString("language");
         updated = (Date) data.getSerializable("updated");
+        lastBuildDate = (Date) data.getSerializable("lastBuildDate");
+        pubDate = (Date) data.getSerializable("pubDate");
         items = data.getParcelableArrayList("items");
         links = data.getParcelableArrayList("links");
     }
@@ -93,6 +100,8 @@ public class Feed implements Parcelable {
         data.putString("description", description);
         data.putString("language", language);
         data.putSerializable("updated", updated);
+        data.putSerializable("lastBuildDate", lastBuildDate);
+        data.putSerializable("pubDate", pubDate);
         data.putParcelableArrayList("items", items);
         data.putParcelableArrayList("links", links);
         dest.writeBundle(data);
@@ -119,6 +128,32 @@ public class Feed implements Parcelable {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public void setLastBuildDate(String lastBuildDate) {
+        this.lastBuildDate = Utils.parseDate(lastBuildDate);
+    }
+
+    public void setLastBuildDate(Date lastBuildDate) {
+        this.lastBuildDate = lastBuildDate;
+    }
+
+    public void setPubDate(String pubDate) {
+        this.pubDate = Utils.parseDate(pubDate);
+    }
+
+    public void setPubDate(Date pubDate) {
+        this.pubDate = pubDate;
+    }
+
+    public Date getDate() {
+        if (updated != null) {
+            return updated;
+        } else if (lastBuildDate != null) {
+            return lastBuildDate;
+        } else {
+            return pubDate;
+        }
     }
 
     void addItem(FeedItem feedItem) {
