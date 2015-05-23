@@ -20,6 +20,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import android.util.Log;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,13 +36,13 @@ import rx.functions.Func0;
 
 public class FeedReader {
 
-    public static RssFeed read(URL url) throws SAXException, IOException {
+    public static Feed read(URL url) throws SAXException, IOException {
 
         return read(url.openStream());
 
     }
 
-    public static RssFeed read(InputStream stream) throws SAXException, IOException {
+    public static Feed read(InputStream stream) throws SAXException, IOException {
 
         try {
 
@@ -61,28 +63,19 @@ public class FeedReader {
 
     }
 
-    public static RssFeed read(String source) throws SAXException, IOException {
+    public static Feed read(String source) throws SAXException, IOException {
         return read(new ByteArrayInputStream(source.getBytes()));
     }
 
-    public static Observable<RssFeed> readWithObservable(final URL url) {
-        return Observable.defer(new Func0<Observable<RssFeed>>() {
+    public static Observable<? extends Feed> readWithObservable(final URL url) {
+        return Observable.defer(new Func0<Observable<Feed>>() {
             @Override
-            public Observable<RssFeed> call() {
+            public Observable<Feed> call() {
                 try {
-                    InputStream stream = url.openStream();
-                    SAXParserFactory factory = SAXParserFactory.newInstance();
-                    SAXParser parser = factory.newSAXParser();
-                    XMLReader reader = parser.getXMLReader();
-                    FeedHandler handler = new FeedHandler();
-                    InputSource input = new InputSource(stream);
-
-                    reader.setContentHandler(handler);
-                    reader.parse(input);
-
-                    return Observable.just(handler.getResult());
+                    return Observable.just(read(url));
                 } catch (Exception e) {
-                    return Observable.just(new RssFeed());
+                    Log.e("FeedReader", "exception = " + e.toString());
+                    return Observable.just(new Feed());
                 }
             }
         });

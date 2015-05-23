@@ -4,14 +4,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.net.URL;
 
-import nl.matshofman.saxrssreader.RssFeed;
+import nl.matshofman.saxrssreader.Feed;
 import nl.matshofman.saxrssreader.FeedReader;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class FeedActivity extends AppCompatActivity {
@@ -26,8 +26,9 @@ public class FeedActivity extends AppCompatActivity {
 
         try {
             FeedReader.readWithObservable(new URL("http://www.repubblica.it/rss/la-repubblica-delle-idee/genova2015/feed.atom"))
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<RssFeed>() {
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Observer<Feed>() {
                         @Override
                         public void onCompleted() {
 
@@ -39,10 +40,10 @@ public class FeedActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onNext(RssFeed rssFeed) {
-                            textView.setText("read feed size = " + rssFeed.getRssItems().size());
-                            Log.i(TAG, "read feed size = " + rssFeed.getRssItems().size());
-                            Toast.makeText(FeedActivity.this, "read feed size = " + rssFeed.getRssItems().size(), Toast.LENGTH_LONG).show();
+                        public void onNext(Feed feed) {
+                            textView.setText("read feed type = " + feed.getFeedtype() + ", size = " + feed.getItems().size());
+                            Log.i(TAG, "read feed type = " + feed.getFeedtype() + ", size = " + feed.getItems().size());
+                            Log.i(TAG, "read feed = " + feed.toString());
                         }
                     });
         } catch (Exception e) {

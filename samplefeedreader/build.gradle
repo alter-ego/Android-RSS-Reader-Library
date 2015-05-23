@@ -1,4 +1,16 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+    }
+}
 
 android {
     compileSdkVersion 22
@@ -25,4 +37,8 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.9'
     compile 'io.reactivex:rxandroid:0.24.0'
     compile project(':library')
+
+    apt "org.projectlombok:lombok:1.16.2"
+    provided "org.projectlombok:lombok:1.16.2"
+    compile "org.projectlombok:lombok:1.16.2"
 }
