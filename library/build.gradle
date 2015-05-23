@@ -1,5 +1,11 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'maven'
+
+ext {
+    buildVersionName = "1.0.0"
+    buildVersionCode = 1
+}
 
 buildscript {
     repositories {
@@ -16,13 +22,18 @@ android {
     compileSdkVersion 8
     buildToolsVersion "22.0.1"
 
+    lintOptions {
+        abortOnError false
+    }
+
     defaultConfig {
+        versionCode buildVersionCode
+        versionName buildVersionName
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
 
@@ -33,5 +44,30 @@ android {
         apt "org.projectlombok:lombok:1.16.2"
         provided "org.projectlombok:lombok:1.16.2"
         provided 'javax.annotation:jsr250-api:1.0'
+    }
+}
+
+task clearJar(type: Delete) {
+    delete 'build/outputs/androidrssreaderlibrary.jar'
+}
+
+task makeJar(type: Copy) {
+    from('build/intermediates/bundles/debug/')
+    into('../releases/')
+    include('classes.jar')
+    rename('classes.jar', 'androidrssreaderlibrary.jar')
+}
+
+makeJar.dependsOn(clearJar, build)
+
+uploadArchives {
+    repositories.mavenDeployer {
+        def deployPath = file(getProperty('jar.deployPath'))
+        repository(url: "file://${deployPath.absolutePath}")
+        pom.project {
+            groupId 'com.alterego'
+            artifactId 'androidrssreaderlibrary'
+            version buildVersionName
+        }
     }
 }
