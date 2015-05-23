@@ -85,8 +85,9 @@ public class FeedActivity extends AppCompatActivity {
 
                         @Override
                         public void onNext(List<FeedItem> feed) {
-                            textView2.setText("read feed items size = " + feed.size());
-                            Log.i(TAG, "read feed size = " + feed.size());
+                            List<FeedItem> dedupeFeed = new ArrayList<>(new LinkedHashSet<>(feed));
+                            textView2.setText("read feed items size = " + feed.size() + ", deduped size = " + dedupeFeed.size());
+                            Log.i(TAG, "read feed size = " + feed.size() + ", deduped size = " + dedupeFeed.size());
                         }
                     });
         } catch (Exception e) {

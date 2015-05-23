@@ -91,6 +91,35 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        FeedItem feedItem = (FeedItem) o;
+
+        if (feedtype != feedItem.feedtype) {
+            return false;
+        }
+        if (id != null ? !id.equals(feedItem.id) : feedItem.id != null) {
+            return false;
+        }
+        return title.equals(feedItem.title);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = feedtype.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + title.hashCode();
+        return result;
+    }
+
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
 
         Bundle data = new Bundle();
