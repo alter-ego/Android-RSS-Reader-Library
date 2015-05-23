@@ -27,11 +27,9 @@ import lombok.ToString;
 @ToString
 public class Link implements Parcelable {
 
-    @Getter
     @Setter
     protected String value;
 
-    @Getter
     @Setter
     protected String href;
 
@@ -75,6 +73,14 @@ public class Link implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    public String getLink() {
+        if (href != null && href.length() > 0) {
+            return href;
+        } else {
+            return value;
+        }
     }
 
 }
