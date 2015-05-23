@@ -21,14 +21,19 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class FeedHandler extends DefaultHandler {
 
+    private static final String TAG = "FeedHandler";
+
     private Feed mFeed;
 
+    private Link mFeedLink;
+
     private FeedItem mFeedItem;
+
+    private Link mFeedItemLink;
 
     private StringBuilder stringBuilder;
 
@@ -47,7 +52,7 @@ public class FeedHandler extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         stringBuilder = new StringBuilder();
-        Log.d("FeedHandler", "startElement qName = " + qName);
+        Log.d(TAG, "startElement qName = " + qName);
 
         if (qName.equals("feed") && mFeed != null) {
             mFeed.setFeedtype(Feed.FEED_TYPE.ATOM);
@@ -61,6 +66,19 @@ public class FeedHandler extends DefaultHandler {
             mFeedItem = new FeedItem();
             mFeedItem.setFeedtype(Feed.FEED_TYPE.ATOM);
             mFeed.addItem(mFeedItem);
+        } else if (qName.equals("link")) {
+            //link inside an entry
+            if (mFeedItem != null) {
+                mFeedItemLink = new Link();
+                mFeedItemLink.setHref(attributes.getValue("href"));
+                mFeedItemLink.setRel(attributes.getValue("rel"));
+                mFeedItem.addLink(mFeedItemLink);
+            } else { //link of the feed
+                mFeedLink = new Link();
+                mFeedLink.setHref(attributes.getValue("href"));
+                mFeedLink.setRel(attributes.getValue("rel"));
+                mFeed.addLink(mFeedLink);
+            }
         }
     }
 
@@ -71,41 +89,40 @@ public class FeedHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) {
-
-        if (mFeed != null && mFeedItem == null) {
-            // Parse feed properties
-
-            try {
-                if (qName != null && qName.length() > 0) {
-                    String methodName = "set" + qName.substring(0, 1).toUpperCase() + qName.substring(1);
-                    Method method = mFeed.getClass().getMethod(methodName, String.class);
-                    method.invoke(mFeed, stringBuilder.toString());
+        Log.d(TAG, "endElement qName = " + qName + ", localName = " + localName + ", uri = " + uri);
+        if (qName != null && qName.length() > 0) {
+            if (mFeed != null && mFeedItem == null) {
+                // Parse feed properties
+                if (qName.equals("link") && mFeedLink != null) {
+                    mFeedLink.setValue(stringBuilder.toString());
+                } else {
+                    try {
+                        String methodName = "set" + qName.substring(0, 1).toUpperCase() + qName.substring(1);
+                        Method method = mFeed.getClass().getMethod(methodName, String.class);
+                        method.invoke(mFeed, stringBuilder.toString());
+                    } catch (Exception e) {
+                        Log.w(TAG, "mFeed exception = " + e.toString());
+                    }
                 }
-            } catch (SecurityException e) {
-            } catch (NoSuchMethodException e) {
-            } catch (IllegalArgumentException e) {
-            } catch (IllegalAccessException e) {
-            } catch (InvocationTargetException e) {
-            }
 
-        } else if (mFeedItem != null) {
-            // Parse item properties
-
-            try {
-                if (qName.equals("content:encoded")) {
-                    qName = "content";
+            } else if (mFeedItem != null) {
+                // Parse item properties
+                if (qName.equals("link") && mFeedItemLink != null) {
+                    mFeedItemLink.setValue(stringBuilder.toString());
+                } else {
+                    try {
+                        if (qName.equals("content:encoded")) {
+                            qName = "content";
+                        }
+                        String methodName = "set" + qName.substring(0, 1).toUpperCase() + qName.substring(1);
+                        Method method = mFeedItem.getClass().getMethod(methodName, String.class);
+                        method.invoke(mFeedItem, stringBuilder.toString());
+                    } catch (Exception e) {
+                        Log.w(TAG, "mFeedItem exception = " + e.toString());
+                    }
                 }
-                String methodName = "set" + qName.substring(0, 1).toUpperCase() + qName.substring(1);
-                Method method = mFeedItem.getClass().getMethod(methodName, String.class);
-                method.invoke(mFeedItem, stringBuilder.toString());
-            } catch (SecurityException e) {
-            } catch (NoSuchMethodException e) {
-            } catch (IllegalArgumentException e) {
-            } catch (IllegalAccessException e) {
-            } catch (InvocationTargetException e) {
             }
         }
-
     }
 
 }

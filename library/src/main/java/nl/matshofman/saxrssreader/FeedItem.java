@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import lombok.Getter;
@@ -40,10 +41,6 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
     @Getter
     @Setter
     protected String title;
-
-    @Getter
-    @Setter
-    protected String link;
 
     @Getter
     @Setter
@@ -69,8 +66,12 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
     @Setter
     private String description;
 
-    public FeedItem() {
+    @Getter
+    @Setter
+    protected ArrayList<Link> links;
 
+    public FeedItem() {
+        links = new ArrayList<Link>();
     }
 
     public FeedItem(Parcel source) {
@@ -79,7 +80,6 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
         feedtype = (Feed.FEED_TYPE) data.getSerializable("feedtype");
         id = data.getString("id");
         title = data.getString("title");
-        link = data.getString("link");
         pubDate = (Date) data.getSerializable("pubDate");
         updated = (Date) data.getSerializable("updated");
         description = data.getString("description");
@@ -87,6 +87,7 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
         author = data.getString("author");
         name = data.getString("name");
         summary = data.getString("summary");
+        links = data.getParcelableArrayList("links");
     }
 
     @Override
@@ -96,7 +97,6 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
         data.putSerializable("feedtype", feedtype);
         data.putString("id", id);
         data.putString("title", title);
-        data.putString("link", link);
         data.putSerializable("pubDate", pubDate);
         data.putSerializable("updated", updated);
         data.putString("description", description);
@@ -104,6 +104,7 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
         data.putString("author", author);
         data.putString("name", name);
         data.putString("summary", summary);
+        data.putParcelableArrayList("links", links);
         dest.writeBundle(data);
     }
 
@@ -154,6 +155,10 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
         } else {
             return 0;
         }
+    }
+
+    void addLink(Link feedItemLink) {
+        links.add(feedItemLink);
     }
 
 }

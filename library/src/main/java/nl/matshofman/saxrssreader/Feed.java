@@ -50,10 +50,6 @@ public class Feed implements Parcelable {
 
     @Getter
     @Setter
-    protected String link;
-
-    @Getter
-    @Setter
     protected String description;
 
     @Getter
@@ -67,8 +63,13 @@ public class Feed implements Parcelable {
     @Setter
     protected ArrayList<FeedItem> items;
 
+    @Getter
+    @Setter
+    protected ArrayList<Link> links;
+
     public Feed() {
         items = new ArrayList<FeedItem>();
+        links = new ArrayList<Link>();
     }
 
     public Feed(Parcel source) {
@@ -76,12 +77,11 @@ public class Feed implements Parcelable {
         Bundle data = source.readBundle();
         feedtype = (FEED_TYPE) data.getSerializable("feedtype");
         title = data.getString("title");
-        link = data.getString("link");
         description = data.getString("description");
         language = data.getString("language");
         updated = (Date) data.getSerializable("updated");
         items = data.getParcelableArrayList("items");
-
+        links = data.getParcelableArrayList("links");
     }
 
     @Override
@@ -90,11 +90,11 @@ public class Feed implements Parcelable {
         Bundle data = new Bundle();
         data.putSerializable("feedtype", feedtype);
         data.putString("title", title);
-        data.putString("link", link);
         data.putString("description", description);
         data.putString("language", language);
         data.putSerializable("updated", updated);
         data.putParcelableArrayList("items", items);
+        data.putParcelableArrayList("links", links);
         dest.writeBundle(data);
     }
 
@@ -123,6 +123,10 @@ public class Feed implements Parcelable {
 
     void addItem(FeedItem feedItem) {
         items.add(feedItem);
+    }
+
+    void addLink(Link feedItemLink) {
+        links.add(feedItemLink);
     }
 
 }
