@@ -33,7 +33,7 @@ public class FeedActivity extends AppCompatActivity {
         final TextView textView2 = (TextView) findViewById(R.id.textview2);
 
         try {
-            FeedReader.readWithObservable(new URL("http://feeds.arstechnica.com/arstechnica/index?format=xml"))
+            FeedReader.readWithObservable(true, new URL("http://feeds.arstechnica.com/arstechnica/index?format=xml"))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(new Observer<Feed>() {
@@ -55,9 +55,9 @@ public class FeedActivity extends AppCompatActivity {
                         }
                     });
 
-            Observable.zip(FeedReader.readWithObservable(new URL("http://www.repubblica.it/rss/la-repubblica-delle-idee/genova2015/feed.atom")),
-                    FeedReader.readWithObservable(new URL("http://www.repubblica.it/rss/la-repubblica-delle-idee/genova2015/other/feed.atom")),
-                    FeedReader.readWithObservable(new URL("http://feeds.arstechnica.com/arstechnica/index?format=xml")),
+            Observable.zip(FeedReader.readWithObservable(false, new URL("http://www.repubblica.it/rss/la-repubblica-delle-idee/genova2015/feed.atom")),
+                    FeedReader.readWithObservable(false, new URL("http://www.repubblica.it/rss/la-repubblica-delle-idee/genova2015/other/feed.atom")),
+                    FeedReader.readWithObservable(false, new URL("http://feeds.arstechnica.com/arstechnica/index?format=xml")),
                     new Func3<Feed, Feed, Feed, List<FeedItem>>() {
                         @Override
                         public List<FeedItem> call(Feed feed, Feed feed2, Feed feed3) {
