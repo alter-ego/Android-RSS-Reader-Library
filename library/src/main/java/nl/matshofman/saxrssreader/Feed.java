@@ -113,6 +113,14 @@ public class Feed implements Parcelable {
         return 0;
     }
 
+    public void setUpdated(String updated) {
+        this.updated = Utils.parseDate(updated);
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
     void addItem(FeedItem feedItem) {
         items.add(feedItem);
     }
