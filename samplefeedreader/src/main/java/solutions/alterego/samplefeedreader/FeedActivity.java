@@ -8,6 +8,7 @@ import android.widget.TextView;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import nl.matshofman.saxrssreader.Feed;
@@ -55,7 +56,7 @@ public class FeedActivity extends AppCompatActivity {
                     });
 
             Observable.zip(FeedReader.readWithObservable(new URL("http://www.repubblica.it/rss/la-repubblica-delle-idee/genova2015/feed.atom")),
-                    FeedReader.readWithObservable(new URL("http://www.engadget.com/topics/podcasts/rss.xml")),
+                    FeedReader.readWithObservable(new URL("http://www.repubblica.it/rss/la-repubblica-delle-idee/genova2015/other/feed.atom")),
                     FeedReader.readWithObservable(new URL("http://feeds.arstechnica.com/arstechnica/index?format=xml")),
                     new Func3<Feed, Feed, Feed, List<FeedItem>>() {
                         @Override

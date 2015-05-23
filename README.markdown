@@ -7,12 +7,12 @@ For an example of how to use this library, please take a look at the `FeedActivi
 
 *Synchronously*
 
-You can use the API by simply calling `FeedReader.read(URL url)`. This will make the request to the url provided and parse it to `Feed` and `FeedItem` objects. 
+You can use the API by simply calling `FeedReader.read(boolean enableLogging, URL url)`. This will make the request to the url provided and parse it to `Feed` and `FeedItem` objects. 
 
 Here is an example of how to fetch a RSS feed and iterate through every item:
 
 	URL url = new URL("http://feeds.arstechnica.com/arstechnica/index?format=xml");
-	Feed feed = FeedReader.read(url);
+	Feed feed = FeedReader.read(false, url);
 	
 	ArrayList<FeedItem> feedItems = feed.getItems();
 	for(FeedItem feedItem : feedItems) {
@@ -21,7 +21,7 @@ Here is an example of how to fetch a RSS feed and iterate through every item:
 
 *Asynchronously through rx-java*
 
-    FeedReader.readWithObservable(new URL("http://feeds.arstechnica.com/arstechnica/index?format=xml"))
+    FeedReader.readWithObservable(true, new URL("http://feeds.arstechnica.com/arstechnica/index?format=xml"))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(new Observer<Feed>() {

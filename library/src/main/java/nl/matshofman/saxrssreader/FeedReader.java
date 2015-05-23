@@ -36,20 +36,20 @@ import rx.functions.Func0;
 
 public class FeedReader {
 
-    public static Feed read(URL url) throws SAXException, IOException {
+    public static Feed read(boolean enableLogging, URL url) throws SAXException, IOException {
 
-        return read(url.openStream());
+        return read(enableLogging, url.openStream());
 
     }
 
-    public static Feed read(InputStream stream) throws SAXException, IOException {
+    public static Feed read(boolean enableLogging, InputStream stream) throws SAXException, IOException {
 
         try {
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
             XMLReader reader = parser.getXMLReader();
-            FeedHandler handler = new FeedHandler();
+            FeedHandler handler = new FeedHandler(enableLogging);
             InputSource input = new InputSource(stream);
 
             reader.setContentHandler(handler);
@@ -63,16 +63,16 @@ public class FeedReader {
 
     }
 
-    public static Feed read(String source) throws SAXException, IOException {
-        return read(new ByteArrayInputStream(source.getBytes()));
+    public static Feed read(boolean enableLogging, String source) throws SAXException, IOException {
+        return read(enableLogging, new ByteArrayInputStream(source.getBytes()));
     }
 
-    public static Observable<? extends Feed> readWithObservable(final URL url) {
+    public static Observable<? extends Feed> readWithObservable(final boolean enableLogging, final URL url) {
         return Observable.defer(new Func0<Observable<Feed>>() {
             @Override
             public Observable<Feed> call() {
                 try {
-                    return Observable.just(read(url));
+                    return Observable.just(read(enableLogging, url));
                 } catch (Exception e) {
                     Log.e("FeedReader", "exception = " + e.toString());
                     return Observable.just(new Feed());

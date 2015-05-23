@@ -27,6 +27,8 @@ public class FeedHandler extends DefaultHandler {
 
     private static final String TAG = "FeedHandler";
 
+    private final boolean mLoggingEnabled;
+
     private Feed mFeed;
 
     private Link mFeedLink;
@@ -36,6 +38,10 @@ public class FeedHandler extends DefaultHandler {
     private Link mFeedItemLink;
 
     private StringBuilder stringBuilder;
+
+    public FeedHandler(boolean enableLogging) {
+        mLoggingEnabled = enableLogging;
+    }
 
     @Override
     public void startDocument() {
@@ -52,7 +58,9 @@ public class FeedHandler extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         stringBuilder = new StringBuilder();
-        Log.d(TAG, "startElement qName = " + qName);
+        if (mLoggingEnabled) {
+            Log.d(TAG, "startElement qName = " + qName);
+        }
 
         if (qName.equals("feed") && mFeed != null) {
             mFeed.setFeedtype(Feed.FEED_TYPE.ATOM);
@@ -89,7 +97,10 @@ public class FeedHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) {
-        Log.d(TAG, "endElement qName = " + qName + ", localName = " + localName + ", uri = " + uri);
+        if (mLoggingEnabled) {
+            Log.d(TAG, "endElement qName = " + qName + ", localName = " + localName + ", uri = " + uri);
+        }
+
         if (qName != null && qName.length() > 0) {
             if (mFeed != null && mFeedItem == null) {
                 // Parse feed properties
@@ -101,7 +112,9 @@ public class FeedHandler extends DefaultHandler {
                         Method method = mFeed.getClass().getMethod(methodName, String.class);
                         method.invoke(mFeed, stringBuilder.toString());
                     } catch (Exception e) {
-                        Log.w(TAG, "mFeed exception = " + e.toString());
+                        if (mLoggingEnabled) {
+                            Log.w(TAG, "mFeed exception = " + e.toString());
+                        }
                     }
                 }
 
@@ -118,7 +131,9 @@ public class FeedHandler extends DefaultHandler {
                         Method method = mFeedItem.getClass().getMethod(methodName, String.class);
                         method.invoke(mFeedItem, stringBuilder.toString());
                     } catch (Exception e) {
-                        Log.w(TAG, "mFeedItem exception = " + e.toString());
+                        if (mLoggingEnabled) {
+                            Log.w(TAG, "mFeedItem exception = " + e.toString());
+                        }
                     }
                 }
             }
