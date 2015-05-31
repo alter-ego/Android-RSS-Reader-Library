@@ -130,6 +130,12 @@ public class FeedHandler extends DefaultHandler {
                         String methodName = "set" + qName.substring(0, 1).toUpperCase() + qName.substring(1);
                         Method method = mFeedItem.getClass().getMethod(methodName, String.class);
                         method.invoke(mFeedItem, stringBuilder.toString());
+                    } catch (NoSuchMethodException noSuchMethodEx) {
+                        if (mLoggingEnabled) {
+                            Log.i(TAG, "mFeedItem NoSuchMethodException = " + noSuchMethodEx.toString());
+                        }
+                        //we add all unknown tags to customTags field
+                        mFeedItem.getCustomTags().put(qName, stringBuilder.toString());
                     } catch (Exception e) {
                         if (mLoggingEnabled) {
                             Log.w(TAG, "mFeedItem exception = " + e.toString());

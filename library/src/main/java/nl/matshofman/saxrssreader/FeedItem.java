@@ -22,6 +22,8 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -70,6 +72,11 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
     @Setter
     protected ArrayList<Link> links;
 
+    @Getter
+    @Setter
+    protected Map<String, String> customTags = new LinkedHashMap<String, String>();
+
+
     public FeedItem() {
         links = new ArrayList<Link>();
     }
@@ -88,6 +95,14 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
         name = data.getString("name");
         summary = data.getString("summary");
         links = data.getParcelableArrayList("links");
+
+        customTags = new LinkedHashMap<String, String>();
+        int size = source.readInt();
+        for (int i = 0; i < size; i++) {
+            String key = source.readString();
+            String value = source.readString();
+            customTags.put(key, value);
+        }
     }
 
     @Override
@@ -134,6 +149,12 @@ public class FeedItem implements Comparable<FeedItem>, Parcelable {
         data.putString("name", name);
         data.putString("summary", summary);
         data.putParcelableArrayList("links", links);
+
+        dest.writeInt(customTags.size());
+        for (Map.Entry<String, String> entry : customTags.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeString(entry.getValue());
+        }
         dest.writeBundle(data);
     }
 
