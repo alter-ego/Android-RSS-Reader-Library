@@ -3,8 +3,8 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'maven'
 
 ext {
-    buildVersionName = "1.0.0"
-    buildVersionCode = 1
+    buildVersionName = "1.1.0"
+    buildVersionCode = 2
 }
 
 buildscript {
